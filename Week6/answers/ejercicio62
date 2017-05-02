@@ -1,0 +1,187 @@
+///////
+1
+///////
+
+db.grades.aggregate([{
+    $project:{
+        class_id:"$class_id",
+        student_id:"$student_id",
+        newScores:{
+            $filter:{
+                input:"$scores",
+                as:"score",
+                cond:{
+                    $ne:["$$score.type", "quiz"]
+                }
+            }
+        }
+    }
+}]).pretty()
+Resultado: 
+{
+	"_id" : ObjectId("50b59cd75bed76f46522c361"),
+	"class_id" : 10,
+	"student_id" : 3,
+	"scores" : [
+		{
+			"type" : "exam",
+			"score" : 35.47946463550763
+		},
+		{
+			"type" : "homework",
+			"score" : 58.43343860077279
+		},
+		{
+			"type" : "homework",
+			"score" : 66.83562834109681
+		}
+	]
+}
+
+
+//////
+2
+//////
+
+db.grades.aggregate([
+    {
+    $project:{
+        class_id:"$class_id",
+        student_id:"$student_id",
+        newScores:{
+            $filter:{
+                input:"$scores",
+                as:"score",
+                cond:{
+                    $ne:["$$score.type", "quiz"]
+                }
+            }
+        }
+    }
+    },
+    {
+    $unwind:"$newScores"
+    }
+]).pretty()
+
+Resultado:
+
+{
+	"_id" : ObjectId("50b59cd75bed76f46522c350"),
+	"class_id" : 5,
+	"student_id" : 0,
+	"newScores" : {
+		"type" : "homework",
+		"score" : 1.23735944117882
+	}
+}
+
+
+
+////////
+3
+////////
+
+db.grades.aggregate([
+    {
+    $project:{
+        class_id:"$class_id",
+        student_id:"$student_id",
+        newScores:{
+            $filter:{
+                input:"$scores",
+                as:"score",
+                cond:{
+                    $ne:["$$score.type", "quiz"]
+                }
+            }
+        }
+    }
+    },
+    {
+    $unwind:"$newScores"
+    },
+        {
+    $group:{
+        _id:"$class_id",
+        averagedd:{$avg:"$newScores.score"}
+    }
+    }
+])
+
+Resultado:
+
+{ "_id" : 1, "averagedd" : 64.8946239524274 }
+{ "_id" : 15, "averagedd" : 46.0647624761693 }
+{ "_id" : 14, "averagedd" : 51.84345926437179 }
+{ "_id" : 4, "averagedd" : 55.51344573971435 }
+{ "_id" : 17, "averagedd" : 49.634260209751545 }
+{ "_id" : 29, "averagedd" : 50.19099742890759 }
+{ "_id" : 20, "averagedd" : 54.06379996612098 }
+{ "_id" : 21, "averagedd" : 47.21105045418332 }
+{ "_id" : 3, "averagedd" : 51.41532471602113 }
+{ "_id" : 23, "averagedd" : 51.55076295987544 }
+{ "_id" : 8, "averagedd" : 43.213118176957295 }
+{ "_id" : 26, "averagedd" : 55.737750302813104 }
+{ "_id" : 12, "averagedd" : 40.90004897965912 }
+{ "_id" : 9, "averagedd" : 58.32770509408072 }
+{ "_id" : 25, "averagedd" : 43.53841621643491 }
+{ "_id" : 13, "averagedd" : 52.10852066426234 }
+{ "_id" : 22, "averagedd" : 44.140982918880255 }
+{ "_id" : 18, "averagedd" : 44.614940408169964 }
+{ "_id" : 27, "averagedd" : 49.1955543030806 }
+{ "_id" : 10, "averagedd" : 47.16230385444219 }
+
+
+////////
+4
+////////
+
+db.grades.aggregate([
+    {
+    $project:{
+        class_id:"$class_id",
+        student_id:"$student_id",
+        newScores:{
+            $filter:{
+                input:"$scores",
+                as:"score",
+                cond:{
+                    $ne:["$$score.type", "quiz"]
+                }
+            }
+        }
+    }
+    },
+    {
+    $unwind:"$newScores"
+    },
+        {
+    $group:{
+        _id:"$class_id",
+        average:{$avg:"$newScores.score"}
+    }
+    },
+    {
+    $sort:{
+        average:1
+    }
+    }
+])
+
+Resultado:
+
+{ "_id" : 2, "average" : 39.552359217939916 }
+{ "_id" : 12, "average" : 40.90004897965912 }
+{ "_id" : 28, "average" : 42.87066827785401 }
+{ "_id" : 8, "average" : 43.213118176957295 }
+{ "_id" : 25, "average" : 43.53841621643491 }
+{ "_id" : 22, "average" : 44.140982918880255 }
+{ "_id" : 18, "average" : 44.614940408169964 }
+{ "_id" : 30, "average" : 45.37205524169313 }
+{ "_id" : 15, "average" : 46.0647624761693 }
+{ "_id" : 10, "average" : 47.16230385444219 }
+{ "_id" : 21, "average" : 47.21105045418332 }
+{ "_id" : 7, "average" : 48.78360353370019 }
+
+

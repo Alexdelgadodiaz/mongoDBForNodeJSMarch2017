@@ -1,0 +1,99 @@
+db.companies.aggregate([
+    {
+    $match:{
+        founded_year:{$eq:2004}
+    }
+    },
+    {
+    $project:{
+        companyName:"$name",
+        fundings:"$funding_rounds",
+        funding_times:{$size:"$funding_rounds"}
+    }
+    },
+    {
+    $match:{
+        funding_times:{$gt:4}
+    }
+    },
+    {
+    $unwind:"$fundings"
+    },
+     {
+    $group:{
+        _id:"$companyName",
+        times:{$max:"$funding_times"},
+        average:{$avg:"$fundings.raised_amount"}
+    }
+    },
+    {
+    $sort:{
+        average:1
+    }
+    }
+]).pretty()
+
+resultado:
+{ "_id" : "Nimbit", "times" : 5, "average" : 1085127.2 }
+{ "_id" : "SparkBase", "times" : 7, "average" : 1503577.142857143 }
+{ "_id" : "Mobidia Technology", "times" : 5, "average" : 3210046.6 }
+{ "_id" : "Balihoo", "times" : 7, "average" : 4083350 }
+{ "_id" : "LimeLife", "times" : 5, "average" : 4180000 }
+{ "_id" : "Hakia", "times" : 5, "average" : 4348396 }
+{ "_id" : "Intelliworks", "times" : 5, "average" : 4790000 }
+{ "_id" : "RainStor", "times" : 5, "average" : 5256965 }
+{ "_id" : "Vantrix", "times" : 6, "average" : 5446705.333333333 }
+{ "_id" : "NewsGator", "times" : 7, "average" : 5619773 }
+{ "_id" : "Tagged", "times" : 5, "average" : 5740395 }
+{ "_id" : "SenSage", "times" : 6, "average" : 6179833.333333333 }
+{ "_id" : "Kareo", "times" : 7, "average" : 7342857 }
+{ "_id" : "Ozmo Devices", "times" : 5, "average" : 7507980 }
+{ "_id" : "PlayFirst", "times" : 5, "average" : 7544000 }
+{ "_id" : "Optaros", "times" : 5, "average" : 7700000 }
+{ "_id" : "Tumri", "times" : 5, "average" : 7750000 }
+{ "_id" : "Limerick BioPharma", "times" : 6, "average" : 8168138.333333333 }
+{ "_id" : "Raydiance", "times" : 7, "average" : 8224933.833333333 }
+{ "_id" : "SugarSync", "times" : 7, "average" : 8714285.714285715 }
+
+
+
+db.companies.aggregate([
+    {
+    $project:{
+        companyName:"$name",
+        fundings:"$funding_rounds",
+        funding_times:{$size:"$funding_rounds"}
+    }
+    },
+    {
+    $unwind:"$fundings"
+    }
+]).pretty()
+
+resultado: 
+{
+	"_id" : ObjectId("52cdef7c4bab8bd675297d91"),
+	"companyName" : "Geni",
+	"fundings" : {
+		"id" : 6,
+		"round_code" : "a",
+		"source_url" : "",
+		"source_description" : "",
+		"raised_amount" : 1500000,
+		"raised_currency_code" : "USD",
+		"funded_year" : 2007,
+		"funded_month" : 1,
+		"funded_day" : 1,
+		"investments" : [
+			{
+				"company" : null,
+				"financial_org" : {
+					"name" : "Founders Fund",
+					"permalink" : "founders-fund"
+				},
+				"person" : null
+			}
+		]
+	},
+	"funding_times" : 3
+}
